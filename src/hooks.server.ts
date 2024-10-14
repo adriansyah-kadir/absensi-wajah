@@ -2,8 +2,13 @@ import { getClient } from '$lib/supabase/server'
 import type { Handle } from '@sveltejs/kit'
 
 export const handle: Handle = async ({ event, resolve }) => {
+  let user = undefined as any
+
   event.locals.supabase = getClient(event)
-  event.locals.user = (await event.locals.supabase.auth.getUser()).data.user
+  event.locals.getUser = async () => {
+    user = user ?? (await event.locals.supabase.auth.getUser()).data.user
+    return user
+  }
 
   return resolve(event, {
     filterSerializedResponseHeaders(name) {

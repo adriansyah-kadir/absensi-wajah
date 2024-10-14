@@ -4,7 +4,8 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ev => {
   ev.depends('groups:list')
 
-  const { user, supabase } = ev.locals
+  const { getUser, supabase } = ev.locals
+  const user = await getUser()
   if (!user) redirect(302, '/signin');
 
   async function getGroups() {

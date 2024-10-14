@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ev => {
   ev.depends('groups:info')
 
   const client = ev.locals.supabase
-  const user = ev.locals.user
+  const user = await ev.locals.getUser()
 
   if (!user) return redirect(302, '/signin');
 
