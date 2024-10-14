@@ -36,8 +36,7 @@
     {#await props.data.groups}
       <LoadingGroups />
     {:then groups}
-      {@const groups_list = groups.data ?? []}
-      {#each groups_list as group}
+      {#each groups as group}
         {@render group_card(group)}
       {/each}
     {/await}
