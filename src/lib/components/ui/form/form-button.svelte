@@ -1,10 +1,8 @@
 <script lang="ts">
-	import * as Button from "$lib/components/ui/button/index.js";
+  import { Button } from "@ui/button";
+  import type { ComponentProps } from "svelte";
 
-	type $$Props = Button.Props;
-	type $$Events = Button.Events;
+  const props: ComponentProps<typeof Button> = $props();
 </script>
 
-<Button.Root type="submit" on:click on:keydown {...$$restProps}>
-	<slot />
-</Button.Root>
+<Button {...props}></Button>

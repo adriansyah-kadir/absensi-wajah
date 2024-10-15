@@ -58,7 +58,7 @@
           </FormControl>
           <FormFieldErrors />
         </FormField>
-        <FormButton class="w-full" type="submit">Login</FormButton>
+        <FormButton type="submit">Login</FormButton>
       </form>
       <Or className="my-2"><small>OR</small></Or>
       <Button class="w-full" variant="secondary" onclick={google_signin(next)}>
