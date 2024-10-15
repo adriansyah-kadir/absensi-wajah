@@ -15,7 +15,7 @@
   import { getClient } from "$lib/supabase/client";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-    import { auth_store } from "$lib/stores/auth";
+  import { auth_store } from "$lib/stores/auth";
 
   const form = superForm(defaults(zod(register_schema)), {
     validators: zodClient(register_schema),

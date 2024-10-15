@@ -3,7 +3,7 @@ import type { HonoApi } from './server/api';
 
 let browserClient: ReturnType<typeof hc<HonoApi>>;
 
-export const honoClient = (fetch: Window['fetch']): ReturnType<typeof hc<HonoApi>> => {
+export const apiClient = (fetch: Window['fetch']): ReturnType<typeof hc<HonoApi>> => {
   const isBrowser = typeof window !== 'undefined';
   const origin = isBrowser ? window.location.origin : '';
 
