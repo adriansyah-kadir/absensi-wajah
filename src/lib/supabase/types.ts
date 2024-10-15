@@ -802,23 +802,60 @@ export type Database = {
           created_at: string
           id: string
           name: string | null
+          picture: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           name?: string | null
+          picture?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string | null
+          picture?: string | null
+        }
+        Relationships: []
+      }
+      attendances: {
+        Row: {
+          absen_data: Json | null
+          absen_types: Database["public"]["Enums"]["absen_type"][] | null
+          created_at: string
+          group_id: number
+          id: number
+          member_id: string
+        }
+        Insert: {
+          absen_data?: Json | null
+          absen_types?: Database["public"]["Enums"]["absen_type"][] | null
+          created_at?: string
+          group_id: number
+          id?: number
+          member_id: string
+        }
+        Update: {
+          absen_data?: Json | null
+          absen_types?: Database["public"]["Enums"]["absen_type"][] | null
+          created_at?: string
+          group_id?: number
+          id?: number
+          member_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "accounts_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
+            foreignKeyName: "attendances_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendances_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -826,14 +863,17 @@ export type Database = {
       group_members: {
         Row: {
           group_id: number
+          id: number
           member_id: string
         }
         Insert: {
           group_id: number
+          id?: number
           member_id?: string
         }
         Update: {
           group_id?: number
+          id?: number
           member_id?: string
         }
         Relationships: [
@@ -893,7 +933,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      absen_type: "face" | "location"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -981,4 +1021,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

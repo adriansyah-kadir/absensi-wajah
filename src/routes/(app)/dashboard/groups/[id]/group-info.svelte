@@ -6,22 +6,39 @@
   import type { PageData } from "./$types";
   import Spacer from "@ui/spacer.svelte";
   import SidebarToggle from "$lib/components/sidebar/sidebar-toggle.svelte";
+  import type { fetchGroupInfo } from "$lib/supabase/query";
+  import type { Tables } from "$lib/supabase/types";
+  import AccountInfo from "$lib/components/account-info.svelte";
+  import { fade, slide } from "svelte/transition";
 
   const {
     group,
   }: {
-    group: Awaited<PageData["group"]>;
+    group: Awaited<ReturnType<typeof fetchGroupInfo>>;
   } = $props();
 
-  let show_member_sidebar = $state(true);
+  let show_member_sidebar = $state(false);
+  let show_member: Tables<"accounts"> | undefined = $state();
+
+  function toggleMembers() {
+    show_member_sidebar = !show_member_sidebar;
+    show_member = undefined;
+  }
 </script>
 
 <div class="flex w-full h-full">
   <Sidebar show={show_member_sidebar}>
     {#each group.group_members as member}
-      <SidebarItem label={member.accounts?.name ?? "-"}>
+      <SidebarItem
+        href="/accounts/{member.accounts!.id}"
+        label={member.accounts?.name ?? "-"}
+      >
         {#snippet icon()}
-          <User size={18} />
+          {#if member.accounts?.picture}
+            <img src={member.accounts.picture} alt="" />
+          {:else}
+            <User size={18} />
+          {/if}
         {/snippet}
       </SidebarItem>
     {/each}
@@ -31,9 +48,7 @@
   <div class="prose p-5">
     <h2>{group.name}</h2>
     <div class="flex flex-wrap items-center gap-5">
-      <Button onclick={() => (show_member_sidebar = !show_member_sidebar)}
-        >Members</Button
-      >
+      <Button onclick={toggleMembers}>Members</Button>
     </div>
   </div>
 </div>

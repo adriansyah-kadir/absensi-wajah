@@ -37,7 +37,7 @@
       style:width={min_width}
       style:height={min_width}
     >
-      <div class={buttonVariants({ size: "icon", variant: "outline" })}>
+      <div class={buttonVariants({ size: "icon", variant: "outline", class: "overflow-hidden" })}>
         {@render props.icon({ expand: $expand, min_width })}
       </div>
     </div>

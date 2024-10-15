@@ -12,3 +12,9 @@ export async function fetchGroupInfo(client: SupabaseClient<Database>, group_id:
   if (result.error) throw result.error
   return result.data
 }
+
+export async function fetchAccountInfo(client: SupabaseClient<Database>, id: string) {
+  const result = await client.from('accounts').select('*').eq('id', id).single()
+  if(result.error) throw result.error;
+  return result.data
+}

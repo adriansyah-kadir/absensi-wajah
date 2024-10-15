@@ -7,9 +7,7 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@ui/dropdown-menu";
-  import {
-    account_store,
-  } from "$lib/stores/account";
+  import { account_store } from "$lib/stores/account";
   import { auth_store } from "$lib/stores/auth";
 
   const account = account_store;
@@ -22,6 +20,7 @@
     class="rounded-r-none relative"
     loading={$account === undefined}
   >
+  <img src={$account?.picture} alt="" class="h-full aspect-square rounded-full mr-2">
     {$account ? $account.name : "Sign in"}
   </Button>
   <DropdownMenu>

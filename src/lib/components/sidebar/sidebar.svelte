@@ -13,6 +13,7 @@
   watch(
     () => $sidebar_expand,
     (v) => {
+      if(props.show === false) return;
       if (v) width = `${menu?.scrollWidth}px`;
       else width = min_width;
     },
