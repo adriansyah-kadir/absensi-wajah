@@ -37,6 +37,7 @@
     "bits-ui": "^0.21.16",
     "clsx": "^2.1.1",
     "formsnap": "^1.0.1",
+    "hono": "^4.6.5",
     "lucide-svelte": "^0.451.0",
     "mode-watcher": "^0.4.1",
     "prettier": "^3.3.3",

@@ -13,17 +13,16 @@
   import { FormControl, FormField, FormFieldErrors, FormLabel } from "@ui/form";
   import { Input } from "@ui/input";
   import { getClient } from "$lib/supabase/client";
-  import { auth_context_key, type AuthContext } from "$lib/stores/auth";
-  import { getContext } from "svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+    import { auth_store } from "$lib/stores/auth";
 
   const form = superForm(defaults(zod(register_schema)), {
     validators: zodClient(register_schema),
   });
   const { form: formData, validateForm, submitting } = form;
   const client = getClient();
-  const auth: AuthContext = getContext(auth_context_key);
+  const auth = auth_store;
   const next = $page.url.searchParams.get("next") ?? "/";
 
   async function submit() {
