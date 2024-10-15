@@ -1,8 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { cn } from "$lib/utils";
-  import { Button, buttonVariants } from "@ui/button";
-    import { useRipple } from "@ui/ripple";
+  import { buttonVariants } from "@ui/button";
   import { getContext, type Snippet } from "svelte";
   import type { Writable } from "svelte/store";
 
@@ -33,21 +32,28 @@
   {onclick}
 >
   {#if props.icon}
-    <div class="center aspect-square flex-shrink-0" style:width={min_width} style:height={min_width}>
-      <div class={buttonVariants({size: 'icon', variant: 'outline'})}>
+    <div
+      class="center aspect-square flex-shrink-0"
+      style:width={min_width}
+      style:height={min_width}
+    >
+      <div class={buttonVariants({ size: "icon", variant: "outline" })}>
         {@render props.icon({ expand: $expand, min_width })}
       </div>
     </div>
   {:else if props.prefix}
-    {@render props.prefix({expand: $expand, min_width})}
+    {@render props.prefix({ expand: $expand, min_width })}
   {/if}
   {#if props.label}
     <p
-      class={cn("translate-x-5 text-nowrap pr-10 opacity-0 transition-all duration-500", {"translate-x-0 opacity-100": $expand})}
+      class={cn(
+        "translate-x-5 text-nowrap pr-10 opacity-0 transition-all duration-500",
+        { "translate-x-0 opacity-100": $expand },
+      )}
     >
       {props.label}
     </p>
   {:else if props.children}
-    {@render props.children({expand: $expand, min_width})}
+    {@render props.children({ expand: $expand, min_width })}
   {/if}
 </button>

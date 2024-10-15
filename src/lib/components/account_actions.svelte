@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Button, buttonVariants } from "@ui/button";
   import { ChevronDown } from "lucide-svelte";
-  import { getContext } from "svelte";
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,13 +8,12 @@
     DropdownMenuTrigger,
   } from "@ui/dropdown-menu";
   import {
-    account_context_key,
-    type AccountContext,
+    account_store,
   } from "$lib/stores/account";
-  import { auth_context_key, type AuthContext } from "$lib/stores/auth";
+  import { auth_store } from "$lib/stores/auth";
 
-  const auth: AuthContext = getContext(auth_context_key);
-  const account: AccountContext = getContext(account_context_key);
+  const account = account_store;
+  const auth = auth_store;
 </script>
 
 <div class="flex">

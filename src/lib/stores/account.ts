@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import type { AuthContext } from "./auth";
+import { auth_store, type AuthContext } from "./auth";
 import type { Tables } from "$lib/supabase/types";
 import { getClient } from "$lib/supabase/client";
 import { toast } from "svelte-sonner";
@@ -7,11 +7,13 @@ import { browser } from "$app/environment";
 
 export const account_context_key = "account-context-key";
 
-export type AccountContext = ReturnType<typeof createAccountContext>
+export type AccountContext = ReturnType<typeof createAccountStore>
 
 export type Account = Tables<"accounts"> | null | undefined;
 
-export function createAccountContext(auth: AuthContext) {
+export const account_store = createAccountStore(auth_store)
+
+export function createAccountStore(auth: AuthContext) {
   const store = writable<Account>(undefined);
   const client = getClient();
   const { subscribe, set } = store;

@@ -1,12 +1,29 @@
+import { goto } from "$app/navigation";
+import { page } from "$app/stores";
 import { getClient } from "$lib/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import { writable } from "svelte/store";
+import { onMount } from "svelte";
+import { get, writable } from "svelte/store";
 
-export const auth_context_key = "auth";
+export const auth_store = createAuthStore();
 
-export type AuthContext = ReturnType<typeof createAuthStore>;
+export function onAuth(
+  on_session: (session: Session) => void,
+  on_null?: () => void,
+) {
+  return onMount(() => {
+    auth_store.subscribe((v) => {
+      if (v) on_session(v);
+      if (v === null) on_null?.call(undefined);
+    });
+  });
+}
 
-export function createAuthStore() {
+export function signin(){
+  goto('/signin?next=' + get(page).url.pathname)
+}
+
+function createAuthStore() {
   const store = writable<Session | null | undefined>(undefined);
   const client = getClient();
   const { subscribe, set } = store;

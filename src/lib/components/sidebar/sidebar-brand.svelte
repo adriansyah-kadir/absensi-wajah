@@ -1,6 +1,6 @@
 <script lang="ts">
   import { PUBLIC_APP_NAME } from "$env/static/public";
-  import { auth_context_key, type AuthContext } from "$lib/stores/auth";
+  import { auth_store } from "$lib/stores/auth";
   import { Button } from "@ui/button";
   import { Paperclip } from "lucide-svelte";
   import { getContext } from "svelte";
@@ -8,7 +8,7 @@
 
   const sidebar_expand: Writable<boolean> = getContext("sidebar-expand");
   const min_width: string = getContext("sidebar-min-width");
-  const auth: AuthContext = getContext(auth_context_key);
+  const auth = auth_store
 </script>
 
 <a href="/">

@@ -1,20 +1,28 @@
 <script lang="ts">
-  import { Skeleton } from "@ui/skeleton";
-  import type { PageData } from "./$types";
+  import GroupInfo from "./group-info.svelte";
+  import { getClient } from "$lib/supabase/client";
+  import { fetchGroupInfo } from "$lib/supabase/query";
+  import { onAuth, signin } from "$lib/stores/auth";
+  import { page } from "$app/stores";
+  import Spinner from "@ui/spinner.svelte";
 
-  const props: {
-    data: PageData;
-  } = $props();
+  const client = getClient();
+  const group =
+    Promise.withResolvers<Awaited<ReturnType<typeof fetchGroupInfo>>>();
+
+  onAuth((s) => {
+    fetchGroupInfo(client, $page.params.id, s.user.id)
+      .then(group.resolve)
+      .catch(group.reject);
+  }, signin);
 </script>
 
-<div class="h-full w-full p-5 prose">
-  {#await props.data.group}
-    <Skeleton>
-      <h2>Loading Group</h2>
-    </Skeleton>
-  {:then group}
-    <h2>{group.name}</h2>
-  {:catch error}
-    <h2>Error getting group info {error.message}</h2>
-  {/await}
-</div>
+{#await group.promise}
+  <div class="h-full w-full center">
+    <Spinner size="50px" />
+  </div>
+{:then group}
+  <GroupInfo {group} />
+{:catch error}
+  <h2>Error getting group info {error.message}</h2>
+{/await}

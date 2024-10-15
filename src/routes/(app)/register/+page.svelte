@@ -2,18 +2,17 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import {
-    account_context_key,
-    type AccountContext,
+    account_store,
   } from "$lib/stores/account";
   import Spinner from "@ui/spinner.svelte";
-  import { getContext } from "svelte";
   import { fly } from "svelte/transition";
   import RegisterForm from "./register-form.svelte";
+  import { onAuth } from "$lib/stores/auth";
 
   const next = $page.url.searchParams.get("next") ?? "/";
-  const account: AccountContext = getContext(account_context_key);
+  const account = account_store;
 
-  $effect(() => {
+  onAuth(() => {
     if ($account?.name) goto(next);
   });
 </script>

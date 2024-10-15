@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { auth_context_key, type AuthContext } from "$lib/stores/auth";
+  import {
+    auth_store,
+    onAuth,
+    signin,
+  } from "$lib/stores/auth";
   import { Input } from "@ui/input";
-  import { getContext } from "svelte";
   import AddDialog from "./add-dialog.svelte";
   import type { Tables } from "$lib/supabase/types";
   import {
@@ -14,13 +17,18 @@
   import { Button } from "@ui/button";
   import { ChevronRight } from "lucide-svelte";
   import LoadingGroups from "./loading-groups.svelte";
-  import type { PageData } from "./$types";
+  import { fetchGroups } from "$lib/supabase/query";
+  import { getClient } from "$lib/supabase/client";
 
-  const props: {
-    data: PageData;
-  } = $props();
-  const auth: AuthContext = getContext(auth_context_key);
+  const client = getClient();
+  const groups =
+    Promise.withResolvers<Awaited<ReturnType<typeof fetchGroups>>>();
+  const auth = auth_store;
   const firstName = $derived($auth?.user.user_metadata.name.split(" ").at(0));
+
+  onAuth((s) => {
+    fetchGroups(client, s.user.id).then(groups.resolve).catch(groups.reject);
+  }, signin);
 </script>
 
 <div class="p-5 overflow-auto h-full">
@@ -33,10 +41,10 @@
     <h4>{firstName} Groups</h4>
   </div>
   <div class="py-5 flex gap-5 flex-wrap">
-    {#await props.data.groups}
+    {#await groups.promise}
       <LoadingGroups />
-    {:then groups}
-      {#each groups as group}
+    {:then list}
+      {#each list as group}
         {@render group_card(group)}
       {/each}
     {/await}
