@@ -2,22 +2,25 @@
   import GroupInfo from "./group-info.svelte";
   import { getClient } from "$lib/supabase/client";
   import { fetchGroupInfo } from "$lib/supabase/query";
-  import { onAuth, signin } from "$lib/stores/auth";
   import { page } from "$app/stores";
   import Spinner from "@ui/spinner.svelte";
+  import { setContext } from "svelte";
+  import { writable, type Writable } from "svelte/store";
+  import type { Tables } from "$lib/supabase/types";
 
   const client = getClient();
-  const group =
-    Promise.withResolvers<Awaited<ReturnType<typeof fetchGroupInfo>>>();
+  const group = fetchGroupInfo(client, parseInt($page.params.id));
+  const members = setContext<Writable<Tables<"accounts">[]>>(
+    "group-members",
+    writable([]),
+  );
 
-  onAuth((s) => {
-    fetchGroupInfo(client, $page.params.id, s.user.id)
-      .then(group.resolve)
-      .catch(group.reject);
-  }, signin);
+  group.then((d) => d.group_members.map((e) => e.accounts).filter(e => !!e)).then(result => {
+    members.set(result)
+  });
 </script>
 
-{#await group.promise}
+{#await group}
   <div class="h-full w-full center">
     <Spinner size="50px" />
   </div>

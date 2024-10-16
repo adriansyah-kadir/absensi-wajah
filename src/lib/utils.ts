@@ -63,8 +63,8 @@ export const flyAndScale = (
   };
 };
 
-export function Log<T>(v: T) {
-  console.log(v);
+export function Log<T>(v: T, ...rest: any) {
+  console.log(v, ...rest);
   return v;
 }
 

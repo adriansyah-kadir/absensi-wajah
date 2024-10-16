@@ -49,7 +49,7 @@
       <Button onclick={toggleMembers}>Members</Button>
     </div>
     {#await LocationsSettings then { default: Component }}
-      <Component />
+      <Component group_id={group.id}/>
     {/await}
   </div>
 </div>
