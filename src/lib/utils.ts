@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import { toast } from "svelte-sonner";
+import { onMount } from "svelte";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -88,4 +89,12 @@ export async function getLocation() {
   const p = Promise.withResolvers<GeolocationPosition>();
   navigator.geolocation.getCurrentPosition(p.resolve, p.reject);
   return p.promise;
+}
+
+export function onLocation() {
+  return {
+    onMount() {
+      console.log('asdf')
+    }
+  }
 }

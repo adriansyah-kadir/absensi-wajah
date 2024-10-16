@@ -3,20 +3,17 @@
   import Sidebar from "$lib/components/sidebar/sidebar.svelte";
   import { Button } from "@ui/button";
   import { User } from "lucide-svelte";
-  import type { PageData } from "./$types";
   import Spacer from "@ui/spacer.svelte";
   import SidebarToggle from "$lib/components/sidebar/sidebar-toggle.svelte";
   import type { fetchGroupInfo } from "$lib/supabase/query";
   import type { Tables } from "$lib/supabase/types";
-  import AccountInfo from "$lib/components/account-info.svelte";
-  import { fade, slide } from "svelte/transition";
-  import LocationsSettings from "./locations-settings.svelte";
 
   const {
     group,
   }: {
     group: Awaited<ReturnType<typeof fetchGroupInfo>>;
   } = $props();
+  const LocationsSettings = import("./locations-settings.svelte");
 
   let show_member_sidebar = $state(false);
   let show_member: Tables<"accounts"> | undefined = $state();
@@ -51,6 +48,8 @@
     <div class="flex flex-wrap items-center gap-5 mb-5">
       <Button onclick={toggleMembers}>Members</Button>
     </div>
-    <LocationsSettings />
+    {#await LocationsSettings then { default: Component }}
+      <Component />
+    {/await}
   </div>
 </div>
