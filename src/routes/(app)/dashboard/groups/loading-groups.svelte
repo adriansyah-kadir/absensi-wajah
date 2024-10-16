@@ -17,6 +17,6 @@
         <CardDescription>Loading Description</CardDescription>
       </Skeleton>
     </div>
-    <Button variant="ghost" size="icon"><Spinner size="3.5rem" /></Button>
+    <Button variant="ghost" size="icon" class="center"><Spinner size="3.5rem" /></Button>
   </CardHeader>
 </Card>

@@ -15,14 +15,18 @@
 </script>
 
 <div class="flex">
-  <Button
-    href={$account ? "" : "/signin"}
-    class="rounded-r-none relative"
-    loading={$account === undefined}
-  >
-  <img src={$account?.picture} alt="" class="h-full aspect-square rounded-full mr-2">
-    {$account ? $account.name : "Sign in"}
-  </Button>
+  <a href={$account ? "/dashboard/me" : "/signin"}>
+    <Button class="rounded-r-none relative" loading={$account === undefined}>
+      {#if $account?.picture}
+        <img
+          src={$account?.picture}
+          alt=""
+          class="h-full aspect-square rounded-full mr-2 pointer-events-none"
+        />
+      {/if}
+      {$account ? $account.name : "Sign in"}
+    </Button>
+  </a>
   <DropdownMenu>
     <DropdownMenuTrigger
       class={buttonVariants({ size: "icon", class: "rounded-l-none" })}

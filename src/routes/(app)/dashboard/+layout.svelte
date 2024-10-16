@@ -28,7 +28,7 @@
     <SidebarAccounts />
     <SidebarToggle />
   </Sidebar>
-  <div class="w-full h-full overflow-auto shadow-inner">
+  <div class="w-full h-full overflow-auto shadow-inner flex">
     {@render props.children()}
   </div>
 </div>

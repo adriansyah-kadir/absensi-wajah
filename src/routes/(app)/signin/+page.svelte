@@ -34,7 +34,7 @@
       <CardTitle>Sign In</CardTitle>
     </CardHeader>
     <CardContent>
-      <form action="?/signin" method="post" use:enhance>
+      <form action="?/signin" method="post" use:enhance class="flex flex-col w-full">
         <FormField {form} name="username">
           <FormControl let:attrs>
             <FormLabel>Username</FormLabel>

@@ -10,6 +10,7 @@
   import type { Tables } from "$lib/supabase/types";
   import AccountInfo from "$lib/components/account-info.svelte";
   import { fade, slide } from "svelte/transition";
+  import LocationsSettings from "./locations-settings.svelte";
 
   const {
     group,
@@ -45,10 +46,11 @@
     <Spacer />
     <SidebarToggle />
   </Sidebar>
-  <div class="prose p-5">
+  <div class="flex flex-col p-5 h-full w-full prose max-w-none">
     <h2>{group.name}</h2>
-    <div class="flex flex-wrap items-center gap-5">
+    <div class="flex flex-wrap items-center gap-5 mb-5">
       <Button onclick={toggleMembers}>Members</Button>
     </div>
+    <LocationsSettings />
   </div>
 </div>
