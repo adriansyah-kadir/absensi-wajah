@@ -711,7 +711,6 @@ export type Database = {
           id: number
           latitude: number
           longitude: number
-          member_id: string | null
           radius: number
         }
         Insert: {
@@ -720,7 +719,6 @@ export type Database = {
           id?: number
           latitude: number
           longitude: number
-          member_id?: string | null
           radius: number
         }
         Update: {
@@ -729,7 +727,6 @@ export type Database = {
           id?: number
           latitude?: number
           longitude?: number
-          member_id?: string | null
           radius?: number
         }
         Relationships: [
@@ -738,13 +735,6 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "absen_locations_member_id_fkey1"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -919,6 +909,36 @@ export type Database = {
           {
             foreignKeyName: "groups_owner_id_fkey1"
             columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_locations: {
+        Row: {
+          location_id: number
+          member_id: string
+        }
+        Insert: {
+          location_id: number
+          member_id: string
+        }
+        Update: {
+          location_id?: number
+          member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "absen_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_locations_member_id_fkey"
+            columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["id"]

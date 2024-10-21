@@ -6,23 +6,35 @@
   import { Button } from "@ui/button";
   import { cn } from "$lib/utils.js";
   import { tick } from "svelte";
-  import { SvelteSet } from "svelte/reactivity";
+  import { watch } from "runed";
 
-  const props: {
+  let {
+    selected = $bindable([]),
+    ...props
+  }: {
+    placeholder?: string;
     values: T[];
     label: (v: T) => string;
     id: (v: T) => string;
+    selected?: string[];
   } = $props();
 
   let open = $state(false);
-  let selected = $state(new SvelteSet<string>());
 
-  let displayValue: string = $state("All");
+  let displayValue: string = $state(props.placeholder ?? "-");
 
-  $effect(() => {
-    console.log(selected);
-  });
+  let trigger_width: number = $state(0);
 
+  watch(
+    () => selected.values(),
+    () => {
+      const values = [...selected].map((e) => {
+        return props.values.find((v) => props.id(v) === e)!;
+      });
+      displayValue = values.map(props.label).join(", ");
+      if (values.length <= 0) displayValue = props.placeholder ?? "-";
+    },
+  );
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the
   // rest of the form with the keyboard.
@@ -36,18 +48,20 @@
 
 <Popover.Root bind:open let:ids>
   <Popover.Trigger asChild let:builder>
-    <Button
-      builders={[builder]}
-      variant="outline"
-      role="combobox"
-      aria-expanded={open}
-      class="w-[200px] justify-between"
-    >
-      {displayValue}
-      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-    </Button>
+    <div class="w-full" bind:clientWidth={trigger_width}>
+      <Button
+        builders={[builder]}
+        variant="outline"
+        role="combobox"
+        aria-expanded={open}
+        class="w-full justify-between"
+      >
+        {displayValue}
+        <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    </div>
   </Popover.Trigger>
-  <Popover.Content class="w-[200px] p-0">
+  <Popover.Content class="p-0" style="width: {trigger_width}px;">
     <Command.Root>
       <Command.Input placeholder="Search framework..." />
       <Command.Empty>No framework found.</Command.Empty>
@@ -58,15 +72,16 @@
           <Command.Item
             value={id}
             onSelect={() => {
-              if (selected.has(id)) selected.delete(id);
-              else selected.add(id);
+              const idx = selected.indexOf(id);
+              if (idx >= 0) selected = selected.toSpliced(idx, 1);
+              else selected = [...selected, id];
               closeAndFocusTrigger(ids.trigger);
             }}
           >
             <Check
               class={cn(
                 "mr-2 h-4 w-4",
-                !selected?.has(id) && "text-transparent",
+                !selected.includes(id) && "text-transparent",
               )}
             />
             {label}

@@ -68,21 +68,15 @@ export function Log<T>(v: T, ...rest: any) {
   return v;
 }
 
-export function toastPromise(loading: string) {
-  const { promise, resolve, reject } = Promise.withResolvers<string>();
+export function toastPromise<T>(promise: Promise<T>, ctx: string) {
   toast.promise(promise, {
-    success: (message) => message,
-    error: (err) => String(err),
-    loading,
-  });
-
-  return {
-    promise,
-    resolve,
-    reject(err: string) {
-      reject(err);
+    success: `Success ${ctx}`,
+    error: (err) => {
+      console.error(err);
+      return `Error ${ctx}`;
     },
-  };
+    loading: `Loading ${ctx}`,
+  });
 }
 
 export async function getLocation() {
@@ -94,7 +88,11 @@ export async function getLocation() {
 export function onLocation() {
   return {
     onMount() {
-      console.log('asdf')
-    }
-  }
+      console.log("asdf");
+    },
+  };
+}
+
+export function nonNullable<T>(t: T | null | undefined): t is T {
+  return t !== null && t !== undefined;
 }

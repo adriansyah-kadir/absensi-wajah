@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    auth_store,
-    onAuth,
-    signin,
-  } from "$lib/stores/auth";
+  import { auth_store, onAuth, signin } from "$lib/stores/auth";
   import { Input } from "@ui/input";
   import AddDialog from "./add-dialog.svelte";
   import type { Tables } from "$lib/supabase/types";
@@ -17,14 +13,16 @@
   import { Button } from "@ui/button";
   import { ChevronRight } from "lucide-svelte";
   import LoadingGroups from "./loading-groups.svelte";
-  import { fetchGroups } from "$lib/supabase/query";
+  import { fetchGroups, type QueryOf } from "$lib/supabase/query";
   import { getClient } from "$lib/supabase/client";
+  import { account_store } from "$lib/stores/account";
 
   const client = getClient();
+
   const groups =
-    Promise.withResolvers<Awaited<ReturnType<typeof fetchGroups>>>();
-  const auth = auth_store;
-  const firstName = $derived($auth?.user.user_metadata.name.split(" ").at(0));
+    Promise.withResolvers<QueryOf<typeof fetchGroups>>();
+
+  const account = account_store;
 
   onAuth((s) => {
     fetchGroups(client, s.user.id).then(groups.resolve).catch(groups.reject);
@@ -38,7 +36,7 @@
       <AddDialog />
       <Input placeholder="Search..." class="w-fit" />
     </div>
-    <h4>{firstName} Groups</h4>
+    <h4>{$account?.name} Groups</h4>
   </div>
   <div class="py-5 flex gap-5 flex-wrap">
     {#await groups.promise}

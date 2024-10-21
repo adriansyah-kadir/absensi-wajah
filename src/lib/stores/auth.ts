@@ -3,24 +3,30 @@ import { page } from "$app/stores";
 import { getClient } from "$lib/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { onMount } from "svelte";
-import { get, writable } from "svelte/store";
+import { get, readable, writable } from "svelte/store";
 
 export const auth_store = createAuthStore();
+
+export const authenticated = readable(false, set => {
+  auth_store.subscribe(v => {
+    set(!!v)
+  })
+})
 
 export function onAuth(
   on_session: (session: Session) => void,
   on_null?: () => void,
 ) {
   return onMount(() => {
-    auth_store.subscribe((v) => {
+    return auth_store.subscribe((v) => {
       if (v) on_session(v);
       if (v === null) on_null?.call(undefined);
     });
   });
 }
 
-export function signin(){
-  goto('/signin?next=' + get(page).url.pathname)
+export function signin() {
+  goto("/signin?next=" + get(page).url.pathname);
 }
 
 function createAuthStore() {

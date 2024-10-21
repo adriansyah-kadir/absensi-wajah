@@ -1,29 +1,29 @@
 <script lang="ts">
   import GroupInfo from "./group-info.svelte";
   import { getClient } from "$lib/supabase/client";
-  import { fetchGroupInfo } from "$lib/supabase/query";
+  import {
+    fetchGroupInfo,
+    type GroupInfoType,
+    type QueryOf,
+  } from "$lib/supabase/query";
+  import { onMount, setContext } from "svelte";
+  import Loading from "./loading.svelte";
   import { page } from "$app/stores";
-  import Spinner from "@ui/spinner.svelte";
-  import { setContext } from "svelte";
-  import { writable, type Writable } from "svelte/store";
-  import type { Tables } from "$lib/supabase/types";
 
   const client = getClient();
-  const group = fetchGroupInfo(client, parseInt($page.params.id));
-  const members = setContext<Writable<Tables<"accounts">[]>>(
-    "group-members",
-    writable([]),
-  );
 
-  group.then((d) => d.group_members.map((e) => e.accounts).filter(e => !!e)).then(result => {
-    members.set(result)
+  const { promise, resolve, reject } =
+    Promise.withResolvers<QueryOf<typeof fetchGroupInfo>>();
+
+  onMount(() => {
+    fetchGroupInfo(client, parseInt($page.params.id))
+      .then(resolve)
+      .catch(reject);
   });
 </script>
 
-{#await group}
-  <div class="h-full w-full center">
-    <Spinner size="50px" />
-  </div>
+{#await promise}
+  <Loading />
 {:then group}
   <GroupInfo {group} />
 {:catch error}

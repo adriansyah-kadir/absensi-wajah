@@ -1,40 +1,55 @@
 <script lang="ts">
   import L from "leaflet";
   import type { Map } from "leaflet";
-  import { getContext, onMount } from "svelte";
   import { current_location } from "$lib/stores/location";
-  import { Button } from "@ui/button";
-  import { LocateIcon, Plus } from "lucide-svelte";
-  import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
-  import Combobox from "$lib/components/combobox.svelte";
-  import type { Writable } from "svelte/store";
-  import type { Tables } from "$lib/supabase/types";
+  import { AbsenLocation } from "./location.svelte";
+  import LocationActions from "./locations-actions.svelte";
+  import {
+    fetchGroupLocations,
+    type fetchGroupInfo,
+    type QueryOf,
+  } from "$lib/supabase/query";
+  import { getClient } from "$lib/supabase/client";
+  import Spinner from "@ui/spinner.svelte";
+  import { watch } from "runed";
+  import { onMount } from "svelte";
 
-  const props: {
-    group_id: number;
+  const {
+    group,
+  }: {
+    group: QueryOf<typeof fetchGroupInfo>;
   } = $props();
-  const members: Writable<Tables<"accounts">[]> = getContext("group-members");
-  const latlng: L.LatLngExpression | undefined = $derived(
-    $current_location
-      ? [$current_location.coords.latitude, $current_location.coords.longitude]
-      : undefined,
-  );
+
+  const client = getClient();
 
   let map: Map | undefined = $state();
 
-  function setupMap() {
-    map = L.map("map").setView(latlng ?? [0, 0], 19);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-    }).addTo(map);
-  }
+  let absen_locations: AbsenLocation[] = $state([]);
 
-  $effect(() => {
-    if (latlng && map) map.setView(latlng);
-  });
+  watch(
+    () => map,
+    () => {
+      if (map) {
+        fetchGroupLocations(client, group.id).then((v) => {
+          v.forEach((e) => {
+            absen_locations.push(
+              new AbsenLocation(map!, e, { draggable: true }),
+            );
+          });
+        });
+      }
+    },
+  );
 
   onMount(() => {
-    setupMap();
+    current_location.wait.then((loc) => {
+      map = L.map("map").setView([loc.coords.latitude, loc.coords.longitude], 19);
+      L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+        minZoom: 0,
+        maxZoom: 20,
+        subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      }).addTo(map);
+    });
   });
 </script>
 
@@ -47,29 +62,17 @@
   />
 </svelte:head>
 
-<div
-  id="map"
-  class="w-full h-full border rounded-md overflow-hidden shadow-inner hover:ring transition-all"
->
-  <div class="absolute z-[100000] top-5 right-5 flex gap-2">
-    <Button
-      onclick={() => map?.setView(latlng ?? [0, 0])}
-      size="icon"
-      variant="outline"><LocateIcon size={18} /></Button
-    >
-    <Popover>
-      <PopoverTrigger asChild let:builder>
-        <Button builders={[builder]} size="icon" variant="outline"
-          ><Plus size={18} /></Button
-        >
-      </PopoverTrigger>
-      <PopoverContent class="z-[100000]">
-        <Combobox
-          values={$members}
-          label={(v) => v.name ?? "-"}
-          id={(v) => v.id}
-        />
-      </PopoverContent>
-    </Popover>
+{#if $current_location}
+  <div id="map" class="w-full h-full rounded-md shadow">
+    {#if map}
+      <div class="absolute top-5 right-5 z-[100000]">
+        <LocationActions bind:absen_locations {group} {map} />
+      </div>
+    {/if}
   </div>
-</div>
+{:else}
+  <div class="w-full h-full center">
+    <Spinner size="50px" />
+    Getting Locations...
+  </div>
+{/if}
