@@ -1,11 +1,11 @@
 <script>
-  import { PUBLIC_APP_NAME } from "$env/static/public";
   import { Button } from "@ui/button";
   import { Card, CardHeader, CardTitle } from "@ui/card";
   import CardContent from "@ui/card/card-content.svelte";
   import { Paperclip, Menu } from "lucide-svelte";
   import { fly } from "svelte/transition";
   import AccountActions from "./account_actions.svelte";
+    import clientEnv from "$lib/client-env";
 
   let showMobileMenu = $state(false);
 </script>
@@ -20,7 +20,7 @@
           ><Paperclip size={18} /></Button
         >
       </span>
-      <h2 class="text-lg font-semibold leading-none">{PUBLIC_APP_NAME}</h2>
+      <h2 class="text-lg font-semibold leading-none">{clientEnv.PUBLIC_APP_NAME}</h2>
     </div>
     <div class="w-full"></div>
     <div class="flex gap-5">

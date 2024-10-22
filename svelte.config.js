@@ -7,10 +7,6 @@ const config = {
   // for more information about preprocessors
   preprocess: vitePreprocess(),
 
-  compilerOptions: {
-    customElement: true,
-  },
-
   kit: {
     alias: {
       "@ui/*": "./src/lib/components/ui/*",

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { PUBLIC_APP_NAME } from "$env/static/public";
+  import clientEnv from "$lib/client-env";
   import { account_store } from "$lib/stores/account";
   import { Button } from "@ui/button";
-  import { Skeleton } from "@ui/skeleton";
   import { User } from "lucide-svelte";
   import { getContext } from "svelte";
   import type { Writable } from "svelte/store";
@@ -36,7 +35,9 @@
     <div
       class="flex h-fit flex-col opacity-0 transition-all duration-500 peer-checked:opacity-100"
     >
-      <h2 class="text-lg font-semibold leading-none">{PUBLIC_APP_NAME}</h2>
+      <h2 class="text-lg font-semibold leading-none">
+        {clientEnv.PUBLIC_APP_NAME}
+      </h2>
       <small
         class="leading-none text-nowrap transition-all"
         class:skeleton={!$account_store}

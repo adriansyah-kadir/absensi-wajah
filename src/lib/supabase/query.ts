@@ -1,4 +1,4 @@
-import type { PostgrestResponse, SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
 export type QueryOf<T extends (...any: any[]) => any> = Awaited<ReturnType<T>>;
