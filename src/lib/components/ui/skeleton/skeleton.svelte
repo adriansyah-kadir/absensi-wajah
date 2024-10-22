@@ -1,13 +1,25 @@
-<script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils.js";
+<script lang="ts" generics="T">
+  import type { HTMLAttributes } from "svelte/elements";
+  import { cn } from "$lib/utils.js";
+  import type { Snippet } from "svelte";
+  import type { TransitionConfig } from "svelte/transition";
 
-	type $$Props = HTMLAttributes<HTMLDivElement>;
-
-	let className: $$Props["class"] = undefined;
-	export { className as class };
+  const {
+    loading,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & {
+    loading?: boolean;
+    children: Snippet;
+  } = $props();
 </script>
 
-<div class={cn("bg-muted animate-pulse h-fit w-fit", className)} {...$$restProps}>
-	<div class="opacity-0"><slot></slot></div>
-</div>
+{#if loading}
+  <div
+    {...props}
+    class={cn("skeleton w-fit h-fit", props.class)}
+  >
+    {@render props.children()}
+  </div>
+{:else}
+  {@render props.children()}
+{/if}

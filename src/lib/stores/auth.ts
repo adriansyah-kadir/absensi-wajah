@@ -14,12 +14,12 @@ export const authenticated = readable(false, set => {
 })
 
 export function onAuth(
-  on_session: (session: Session) => void,
+  on_session?: (session: Session) => void,
   on_null?: () => void,
 ) {
   return onMount(() => {
     return auth_store.subscribe((v) => {
-      if (v) on_session(v);
+      if (v && on_session) on_session(v);
       if (v === null) on_null?.call(undefined);
     });
   });

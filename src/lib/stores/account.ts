@@ -40,16 +40,6 @@ export function createAccountStore() {
     } else set(auth);
   });
 
-  subscribe(account => {
-    const auth = get(auth_store)
-    if(!account?.picture && auth && auth.user.user_metadata?.picture) {
-      update(prev => {
-        prev!.picture = auth.user.user_metadata.picture
-        return prev
-      })
-    }
-  })
-
   return {
     subscribe,
   };

@@ -29,7 +29,7 @@
   }, signin);
 </script>
 
-<div class="p-5 overflow-auto h-full">
+<div class="p-5 overflow-auto h-full w-full">
   <div class="prose">
     <h2>Groups</h2>
     <div class="flex flex-wrap items-center gap-5">

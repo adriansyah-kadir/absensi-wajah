@@ -13,6 +13,7 @@
   import Spinner from "@ui/spinner.svelte";
   import { watch } from "runed";
   import { onMount } from "svelte";
+  import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@ui/select";
 
   const {
     group,
@@ -43,7 +44,10 @@
 
   onMount(() => {
     current_location.wait.then((loc) => {
-      map = L.map("map").setView([loc.coords.latitude, loc.coords.longitude], 19);
+      map = L.map("map").setView(
+        [loc.coords.latitude, loc.coords.longitude],
+        19,
+      );
       L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
         minZoom: 0,
         maxZoom: 20,
@@ -51,6 +55,8 @@
       }).addTo(map);
     });
   });
+
+  $inspect(absen_locations)
 </script>
 
 <svelte:head>
@@ -65,8 +71,20 @@
 {#if $current_location}
   <div id="map" class="w-full h-full rounded-md shadow">
     {#if map}
-      <div class="absolute top-5 right-5 z-[100000]">
+      <div class="absolute top-5 right-5 z-[100000] space-y-2">
         <LocationActions bind:absen_locations {group} {map} />
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Locations"/>
+          </SelectTrigger>
+          <SelectContent class="z-[999999]">
+            {#each absen_locations as location}
+              <SelectItem value={location.data.id} onclick={() => {
+                map?.panTo(location.layers.marker.getLatLng())
+              }} label={location.data.id.toString()}>{location.data.id}</SelectItem>
+            {/each}
+          </SelectContent>
+        </Select>
       </div>
     {/if}
   </div>

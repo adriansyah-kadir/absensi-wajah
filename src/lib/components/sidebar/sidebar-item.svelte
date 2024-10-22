@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { cn } from "$lib/utils";
   import { buttonVariants } from "@ui/button";
+  import { useRipple } from "@ui/ripple";
   import { getContext, type Snippet } from "svelte";
   import type { Writable } from "svelte/store";
 
@@ -28,7 +29,10 @@
 </script>
 
 <button
-  class={cn("flex w-full items-center hover:bg-foreground/5", props.class)}
+  class={cn(
+    "flex w-full items-center hover:bg-foreground/5 relative",
+    props.class,
+  )}
   {onclick}
 >
   {#if props.icon}
@@ -37,7 +41,13 @@
       style:width={min_width}
       style:height={min_width}
     >
-      <div class={buttonVariants({ size: "icon", variant: "outline", class: "overflow-hidden" })}>
+      <div
+        class={buttonVariants({
+          size: "icon",
+          variant: "outline",
+          class: "overflow-hidden",
+        })}
+      >
         {@render props.icon({ expand: $expand, min_width })}
       </div>
     </div>

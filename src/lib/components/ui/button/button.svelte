@@ -20,6 +20,7 @@
     leadingIcon?: Snippet;
     href?: string;
     builders?: Builder[];
+    skeleton?: boolean;
   } & ButtonProps = $props();
 
   const ripple_color = ["ghost", "outline", "secondary"].includes(variant)
@@ -30,6 +31,7 @@
 <button
   use:useRipple={{ color: ripple_color }}
   use:builderActions={{ builders: props.builders ?? [] }}
+  class:skeleton={props.skeleton}
   class={cn(
     buttonVariants({ variant, size, className: class_name }),
     "relative overflow-hidden",

@@ -42,7 +42,7 @@
   }
 </script>
 
-<div class="flex gap-2 items-center">
+<div class="flex justify-end gap-2 items-center">
   <Button size="icon" variant="outline" onclick={focusToCurrentLocation}
     ><Locate size={18} /></Button
   >

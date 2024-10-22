@@ -4,6 +4,7 @@ import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { onMount } from "svelte";
+import { writable } from "svelte/store";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -95,4 +96,29 @@ export function onLocation() {
 
 export function nonNullable<T>(t: T | null | undefined): t is T {
   return t !== null && t !== undefined;
+}
+
+export function promiseState<T, E = any>(promise?: Promise<T>) {
+  const state = writable<{
+    pending: boolean;
+    value?: T;
+    error?: E;
+  }>({
+    pending: true,
+    value: undefined,
+    error: undefined,
+  });
+
+  const { subscribe, update } = state;
+
+  if (promise) {
+    promise.then((value) => update((v) => ({ pending: false, value: value })));
+    promise.catch((error) => update((v) => ({ pending: false, error: error })));
+  }
+
+  return {
+    subscribe,
+    resolve: (v: T) => update((prev) => ({ pending: false, value: v })),
+    reject: (e: E) => update((prev) => ({ pending: false, error: e })),
+  };
 }

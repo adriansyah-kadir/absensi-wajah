@@ -1,31 +1,46 @@
 <script lang="ts">
-  import GroupInfo from "./group-info.svelte";
   import { getClient } from "$lib/supabase/client";
-  import {
-    fetchGroupInfo,
-    type GroupInfoType,
-    type QueryOf,
-  } from "$lib/supabase/query";
-  import { onMount, setContext } from "svelte";
-  import Loading from "./loading.svelte";
+  import { fetchGroupInfo, type QueryOf } from "$lib/supabase/query";
+  import { onMount } from "svelte";
   import { page } from "$app/stores";
+  import { promiseState } from "$lib/utils";
+  import MembersSidebar from "./members-sidebar.svelte";
+  import { Button } from "@ui/button";
 
   const client = getClient();
 
-  const { promise, resolve, reject } =
-    Promise.withResolvers<QueryOf<typeof fetchGroupInfo>>();
+  const group_state = promiseState<QueryOf<typeof fetchGroupInfo>>();
+
+  const LocationsSettings = import("./locations-settings.svelte");
+
+  let show_member_sidebar = $state(false);
 
   onMount(() => {
     fetchGroupInfo(client, parseInt($page.params.id))
-      .then(resolve)
-      .catch(reject);
+      .then(group_state.resolve)
+      .catch(group_state.reject);
   });
 </script>
 
-{#await promise}
-  <Loading />
-{:then group}
-  <GroupInfo {group} />
-{:catch error}
-  <h2>Error getting group info {error.message}</h2>
-{/await}
+<div class="flex w-full h-full">
+  {#if $group_state.value}
+    <MembersSidebar group={$group_state.value} show={show_member_sidebar} />
+  {/if}
+  <div class="flex flex-col p-5 h-full w-full prose max-w-none">
+    <h2 class:skeleton={$group_state.pending} class="w-fit transition-all">
+      {$group_state.value?.name ?? "Loading..."}
+    </h2>
+    <div class="flex flex-wrap items-center gap-5 mb-5">
+      <Button
+        loading={$group_state.pending}
+        onclick={() => (show_member_sidebar = !show_member_sidebar)}
+        >Members</Button
+      >
+    </div>
+    {#await LocationsSettings then { default: Component }}
+      {#if $group_state.value}
+        <Component group={$group_state.value} />
+      {/if}
+    {/await}
+  </div>
+</div>
