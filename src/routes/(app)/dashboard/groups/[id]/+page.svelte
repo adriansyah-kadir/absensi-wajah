@@ -10,37 +10,36 @@
 
   const client = getClient();
 
-  const group_state = promiseState<QueryOf<typeof fetchGroupInfo>>();
+  const group = promiseState<QueryOf<typeof fetchGroupInfo>>();
 
   let show_member_sidebar = $state(false);
 
   onMount(() => {
     fetchGroupInfo(client, parseInt($page.params.id))
-      .then(group_state.resolve)
-      .catch(group_state.reject);
+      .then(group.resolve)
+      .catch(group.reject);
   });
 </script>
 
 <div class="flex w-full h-full">
-  {#if $group_state.value}
-    <MembersSidebar group={$group_state.value} show={show_member_sidebar} />
+  {#if $group.value}
+    <MembersSidebar group={$group.value} show={show_member_sidebar} />
   {/if}
+
   <div class="flex flex-col p-5 h-full w-full prose max-w-none">
-    <h2 class:skeleton={$group_state.pending} class="w-fit transition-all">
-      {$group_state.value?.name ?? "Loading..."}
+    <h2 class:skeleton={$group.pending} class="w-fit transition-all">
+      {$group.value?.name ?? "Loading..."}
     </h2>
     <div class="flex flex-wrap items-center gap-5 mb-5">
       <Button
-        loading={$group_state.pending}
+        loading={$group.pending}
         onclick={() => (show_member_sidebar = !show_member_sidebar)}
         >Members</Button
       >
     </div>
-    {#if browser}
+    {#if browser && $group.value}
       {#await import("./locations-settings.svelte") then { default: Component }}
-        {#if $group_state.value}
-          <Component group={$group_state.value} />
-        {/if}
+        <Component group={$group.value} />
       {/await}
     {/if}
   </div>

@@ -25,20 +25,28 @@
 
   let map: Map | undefined = $state();
 
-  watch(
-    () => map,
-    () => {
-      if (map) {
-        fetchGroupLocations(client, group.id).then((locations_data) => {
-          $absen_locations.push(
-            ...locations_data.map(
-              (e) => new AbsenLocation(map!, e, { draggable: true }),
-            ),
-          );
-        });
-      }
-    },
-  );
+  function handleSelectedLocation(v?: AbsenLocation) {
+    const latlng = v?.layers.marker.getLatLng() ?? current_location.toLatLng();
+    if (latlng) map?.panTo(latlng);
+  }
+
+  function fetchGroupAbsenLocations(map: Map) {
+    fetchGroupLocations(client, group.id).then((locations_data) => {
+      $absen_locations.push(
+        ...locations_data.map(
+          (e) => new AbsenLocation(map!, e, { draggable: true }),
+        ),
+      );
+    });
+  }
+
+  function addTileLayer(map: Map) {
+    L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+      minZoom: 0,
+      maxZoom: 20,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+    }).addTo(map);
+  }
 
   onMount(() => {
     current_location.wait.then((loc) => {
@@ -46,18 +54,11 @@
         [loc.coords.latitude, loc.coords.longitude],
         19,
       );
-      L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
-        minZoom: 0,
-        maxZoom: 20,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
-      }).addTo(map);
+
+      addTileLayer(map);
+      fetchGroupAbsenLocations(map);
     });
   });
-
-  function handleSelectedLocation(v?: AbsenLocation) {
-    const latlng = v?.layers.marker.getLatLng() ?? current_location.toLatLng();
-    if (latlng) map?.panTo(latlng);
-  }
 </script>
 
 <!-- leaflet css -->
@@ -70,22 +71,18 @@
   />
 </svelte:head>
 
-{#if $current_location}
-  <div id="map" class="w-full h-full rounded-md shadow">
-    {#if map}
-      <div class="absolute top-5 right-5 z-[100000] space-y-2">
-        <LocationActions
-          bind:absen_locations={$absen_locations}
-          {group}
-          {map}
-        />
-        <AbsenLocationsSelect onChange={handleSelectedLocation} />
-      </div>
-    {/if}
-  </div>
-{:else}
-  <div class="w-full h-full center">
-    <Spinner size="50px" />
+<div id="map" class="w-full h-full rounded-md relative">
+  {#if map}
+    <div class="absolute top-5 right-5 z-[100000] space-y-2">
+      <LocationActions bind:absen_locations={$absen_locations} {group} {map} />
+      <AbsenLocationsSelect onChange={handleSelectedLocation} />
+    </div>
+  {/if}
+
+  <div
+    class="w-fit h-fit center absolute -translate-y-1/2 top-1/2 -translate-x-1/2 left-1/2 z-[10000]"
+  >
+    <Spinner size="50px" class="mr-4" />
     Getting Locations...
   </div>
-{/if}
+</div>
