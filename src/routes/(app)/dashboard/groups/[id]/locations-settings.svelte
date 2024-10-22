@@ -2,7 +2,7 @@
   import L from "leaflet";
   import type { Map } from "leaflet";
   import { current_location } from "$lib/stores/location";
-  import { AbsenLocation } from "./location.svelte";
+  import { absen_locations, AbsenLocation } from "./location.svelte";
   import LocationActions from "./locations-actions.svelte";
   import {
     fetchGroupLocations,
@@ -13,7 +13,7 @@
   import Spinner from "@ui/spinner.svelte";
   import { watch } from "runed";
   import { onMount } from "svelte";
-  import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@ui/select";
+  import AbsenLocationsSelect from "./absen_locations_select.svelte";
 
   const {
     group,
@@ -25,18 +25,16 @@
 
   let map: Map | undefined = $state();
 
-  let absen_locations: AbsenLocation[] = $state([]);
-
   watch(
     () => map,
     () => {
       if (map) {
-        fetchGroupLocations(client, group.id).then((v) => {
-          v.forEach((e) => {
-            absen_locations.push(
-              new AbsenLocation(map!, e, { draggable: true }),
-            );
-          });
+        fetchGroupLocations(client, group.id).then((locations_data) => {
+          $absen_locations.push(
+            ...locations_data.map(
+              (e) => new AbsenLocation(map!, e, { draggable: true }),
+            ),
+          );
         });
       }
     },
@@ -56,9 +54,13 @@
     });
   });
 
-  $inspect(absen_locations)
+  function handleSelectedLocation(v?: AbsenLocation) {
+    const latlng = v?.layers.marker.getLatLng() ?? current_location.toLatLng();
+    if (latlng) map?.panTo(latlng);
+  }
 </script>
 
+<!-- leaflet css -->
 <svelte:head>
   <link
     rel="stylesheet"
@@ -72,19 +74,12 @@
   <div id="map" class="w-full h-full rounded-md shadow">
     {#if map}
       <div class="absolute top-5 right-5 z-[100000] space-y-2">
-        <LocationActions bind:absen_locations {group} {map} />
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Locations"/>
-          </SelectTrigger>
-          <SelectContent class="z-[999999]">
-            {#each absen_locations as location}
-              <SelectItem value={location.data.id} onclick={() => {
-                map?.panTo(location.layers.marker.getLatLng())
-              }} label={location.data.id.toString()}>{location.data.id}</SelectItem>
-            {/each}
-          </SelectContent>
-        </Select>
+        <LocationActions
+          bind:absen_locations={$absen_locations}
+          {group}
+          {map}
+        />
+        <AbsenLocationsSelect onChange={handleSelectedLocation} />
       </div>
     {/if}
   </div>

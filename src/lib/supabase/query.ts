@@ -51,7 +51,6 @@ export async function fetchGroupLocations(
     .from("absen_locations")
     .select("*")
     .eq("group_id", group_id);
-  console.log(result);
   if (result.error) throw result.error;
   return result.data;
 }

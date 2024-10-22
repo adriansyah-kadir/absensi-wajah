@@ -122,3 +122,9 @@ export function promiseState<T, E = any>(promise?: Promise<T>) {
     reject: (e: E) => update((prev) => ({ pending: false, error: e })),
   };
 }
+
+export function delayed(fn: () => void, ms: number) {
+  return () => {
+    setTimeout(fn, ms);
+  };
+}

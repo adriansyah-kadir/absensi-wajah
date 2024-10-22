@@ -7,21 +7,25 @@ import { get, readable, writable } from "svelte/store";
 
 export const auth_store = createAuthStore();
 
-export const authenticated = readable(false, set => {
-  auth_store.subscribe(v => {
-    set(!!v)
-  })
-})
+export const authenticated = readable(false, (set) => {
+  auth_store.subscribe((v) => {
+    set(!!v);
+  });
+});
 
 export function onAuth(
   on_session?: (session: Session) => void,
   on_null?: () => void,
 ) {
   return onMount(() => {
-    return auth_store.subscribe((v) => {
+    const unsubcribe = auth_store.subscribe((v) => {
       if (v && on_session) on_session(v);
       if (v === null) on_null?.call(undefined);
     });
+
+    return () => {
+      unsubcribe();
+    };
   });
 }
 

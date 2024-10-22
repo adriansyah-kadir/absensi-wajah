@@ -7,14 +7,13 @@
   import Spinner from "@ui/spinner.svelte";
   import { fly } from "svelte/transition";
   import RegisterForm from "./register-form.svelte";
-  import { onAuth } from "$lib/stores/auth";
 
   const next = $page.url.searchParams.get("next") ?? "/";
   const account = account_store;
 
-  onAuth(() => {
-    if ($account?.name) goto(next);
-  });
+  $effect(() => {
+    if($account?.name) goto(next);
+  })
 </script>
 
 <div class="h-screen w-screen center">

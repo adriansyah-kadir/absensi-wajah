@@ -186,6 +186,7 @@ export type Database = {
           ip_address: unknown
           otp_code: string | null
           verified_at: string | null
+          web_authn_session_data: Json | null
         }
         Insert: {
           created_at: string
@@ -194,6 +195,7 @@ export type Database = {
           ip_address: unknown
           otp_code?: string | null
           verified_at?: string | null
+          web_authn_session_data?: Json | null
         }
         Update: {
           created_at?: string
@@ -202,6 +204,7 @@ export type Database = {
           ip_address?: unknown
           otp_code?: string | null
           verified_at?: string | null
+          web_authn_session_data?: Json | null
         }
         Relationships: [
           {
@@ -225,6 +228,8 @@ export type Database = {
           status: Database["auth"]["Enums"]["factor_status"]
           updated_at: string
           user_id: string
+          web_authn_aaguid: string | null
+          web_authn_credential: Json | null
         }
         Insert: {
           created_at: string
@@ -237,6 +242,8 @@ export type Database = {
           status: Database["auth"]["Enums"]["factor_status"]
           updated_at: string
           user_id: string
+          web_authn_aaguid?: string | null
+          web_authn_credential?: Json | null
         }
         Update: {
           created_at?: string
@@ -249,6 +256,8 @@ export type Database = {
           status?: Database["auth"]["Enums"]["factor_status"]
           updated_at?: string
           user_id?: string
+          web_authn_aaguid?: string | null
+          web_authn_credential?: Json | null
         }
         Relationships: [
           {
@@ -709,6 +718,7 @@ export type Database = {
           created_at: string
           group_id: number
           id: number
+          label: string | null
           latitude: number
           longitude: number
           radius: number
@@ -717,6 +727,7 @@ export type Database = {
           created_at?: string
           group_id: number
           id?: number
+          label?: string | null
           latitude: number
           longitude: number
           radius: number
@@ -725,6 +736,7 @@ export type Database = {
           created_at?: string
           group_id?: number
           id?: number
+          label?: string | null
           latitude?: number
           longitude?: number
           radius?: number

@@ -1,13 +1,12 @@
 import type { Tables } from "$lib/supabase/types";
 import { mount } from "svelte";
-import AbsenPositionInfo from "./absen-position-info.svelte";
+import AbsenPositionInfo from "./absen-position-popup.svelte";
 import L from "leaflet";
 import { getClient } from "$lib/supabase/client";
 import { toastPromise } from "$lib/utils";
+import { writable } from "svelte/store";
 
-type Options = {
-  draggable?: boolean;
-};
+export const absen_locations = writable<AbsenLocation[]>([]);
 
 export class AbsenLocation {
   map: L.Map;
@@ -19,7 +18,13 @@ export class AbsenLocation {
     circle: L.Circle;
   };
 
-  constructor(map: L.Map, data: Tables<"absen_locations">, options?: Options) {
+  constructor(
+    map: L.Map,
+    data: Tables<"absen_locations">,
+    options?: {
+      draggable?: boolean;
+    },
+  ) {
     const pos: L.LatLngExpression = [data.latitude, data.longitude];
     const radius = data.radius;
 
@@ -94,5 +99,8 @@ export class AbsenLocation {
     if (result.error) return p.reject(result.error);
     p.resolve(result.data);
     this.eachLayers(({ layer }) => layer.remove());
+    absen_locations.update((prev) => {
+      return prev.filter((e) => e.data.id !== this.data.id);
+    });
   }
 }

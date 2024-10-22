@@ -7,6 +7,7 @@
   import { cn } from "$lib/utils";
   import { goto } from "$app/navigation";
   import { Loader } from "lucide-svelte";
+  import Spinner from "@ui/spinner.svelte";
 
   const {
     variant = "default",
@@ -42,7 +43,7 @@
   disabled={props.loading || props.disabled}
 >
   {#if props.loading}
-    <Loader size={18} class="mr-2 animate-spin" />
+    <Spinner size="15px" class="border border-t-black/50" />
   {:else if props.leadingIcon}
     <span class="mr-2">
       {@render props.leadingIcon()}

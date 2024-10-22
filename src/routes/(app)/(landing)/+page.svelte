@@ -11,7 +11,7 @@
     </p>
     <div class="flex gap-4">
       <Button href="/dashboard">Get started</Button>
-      <Button href="https://github.com" variant="ghost">Self Hosting</Button>
+      <Button href="https://github.com" variant="outline">Self Hosting</Button>
     </div>
   </div>
 </div>

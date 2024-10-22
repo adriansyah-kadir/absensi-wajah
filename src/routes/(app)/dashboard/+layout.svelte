@@ -6,10 +6,14 @@
   import { type Snippet } from "svelte";
   import SidebarProjects from "./sidebar-projects.svelte";
   import SidebarAccounts from "./sidebar-accounts.svelte";
+  import { onAuth, signin } from "$lib/stores/auth";
+  import { delayed } from "$lib/utils";
 
   const props: {
     children: Snippet;
   } = $props();
+
+  onAuth(undefined, delayed(signin, 1000));
 </script>
 
 <div
