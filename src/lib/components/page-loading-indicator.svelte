@@ -22,7 +22,7 @@
 		transition:fly={{ y: -20 }}
 		class="fixed right-1/2 top-5 z-[999] flex translate-x-1/2 items-center rounded-full border-[1px] bg-background px-5 py-2 shadow-lg"
 	>
-		<Spinner size="1rem" />
+		<Spinner size="1rem" class="mr-4 border"/>
 		loading
 	</div>
 {/if}

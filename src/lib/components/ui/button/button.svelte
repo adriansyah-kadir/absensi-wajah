@@ -43,7 +43,7 @@
   disabled={props.loading || props.disabled}
 >
   {#if props.loading}
-    <Spinner size="15px" class="border border-t-black/50" />
+    <Spinner size="15px" class="border border-t-black/50 mr-2" />
   {:else if props.leadingIcon}
     <span class="mr-2">
       {@render props.leadingIcon()}

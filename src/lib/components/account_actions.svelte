@@ -29,6 +29,7 @@
   </a>
   <DropdownMenu>
     <DropdownMenuTrigger
+      disabled={$account === undefined}
       class={buttonVariants({ size: "icon", class: "rounded-l-none" })}
     >
       <ChevronDown size={18} />

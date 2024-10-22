@@ -37,6 +37,10 @@ export class AbsenLocation {
       circle: L.circle(pos, { radius }),
     };
 
+    this.eachLayers(({ layer }) => {
+      layer.addTo(map);
+    });
+
     const absen_location = this;
 
     this.layers.marker.bindPopup((layer) => {
@@ -48,12 +52,12 @@ export class AbsenLocation {
       return container;
     });
 
+    this.layers.marker
+      .bindTooltip(data.label ?? data.id.toString())
+      .openTooltip();
+
     this.layers.marker.on("dragend", () => {
       this.layers.circle.setLatLng(this.layers.marker.getLatLng());
-    });
-
-    this.eachLayers(({ layer }) => {
-      layer.addTo(map);
     });
   }
 

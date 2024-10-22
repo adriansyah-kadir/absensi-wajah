@@ -19,8 +19,7 @@
 
   const client = getClient();
 
-  const groups =
-    Promise.withResolvers<QueryOf<typeof fetchGroups>>();
+  const groups = Promise.withResolvers<QueryOf<typeof fetchGroups>>();
 
   const account = account_store;
 

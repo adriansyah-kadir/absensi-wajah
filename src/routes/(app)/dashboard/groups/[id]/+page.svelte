@@ -6,12 +6,11 @@
   import { promiseState } from "$lib/utils";
   import MembersSidebar from "./members-sidebar.svelte";
   import { Button } from "@ui/button";
+  import { browser } from "$app/environment";
 
   const client = getClient();
 
   const group_state = promiseState<QueryOf<typeof fetchGroupInfo>>();
-
-  const LocationsSettings = import("./locations-settings.svelte");
 
   let show_member_sidebar = $state(false);
 
@@ -37,10 +36,12 @@
         >Members</Button
       >
     </div>
-    {#await LocationsSettings then { default: Component }}
-      {#if $group_state.value}
-        <Component group={$group_state.value} />
-      {/if}
-    {/await}
+    {#if browser}
+      {#await import("./locations-settings.svelte") then { default: Component }}
+        {#if $group_state.value}
+          <Component group={$group_state.value} />
+        {/if}
+      {/await}
+    {/if}
   </div>
 </div>
